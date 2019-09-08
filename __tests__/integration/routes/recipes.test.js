@@ -5,14 +5,24 @@ const { Recipe } = require("../../../src/app/models");
 
 const baseUrl = "/recipes";
 
-const sampleRecipe = {
+const validRecipe = {
   title: "Arroz com Feijão",
   ingredients: [0, 4, 6],
   instructions: ["Cozinhe o arroz.", "Cozinhe o feijão.", "Misture os dois."]
 };
 
+const invalidRecipe = [
+  { title: [4, 2, 0], ingredients: [1, 2, 3], instructions: ["A", "B", "C"] },
+  { ingredients: "foo", title: "Paçoca moída", instructions: ["A", "B", "C"] },
+  { instructions: { foo: "bar" }, title: "Paçoca moída", ingredients: [1, 2, 3] }
+];
+
+const incompleteRecipe = {
+  title: "Arroz com feijão"
+};
+
 describe("[ROUTE] recipes", () => {
-  beforeAll(async () => await Recipe.create(sampleRecipe));
+  beforeAll(async () => await Recipe.create(validRecipe));
   afterAll(async () => await truncate());
 
   describe("GET", () => {
@@ -54,7 +64,7 @@ describe("[ROUTE] recipes", () => {
       it("should return status 201", async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(sampleRecipe)
+          .send(validRecipe)
           .set("Content-Type", "application/json")
           .set("Accept", "application/json");
         expect(response.status).toBe(201);
@@ -62,13 +72,7 @@ describe("[ROUTE] recipes", () => {
     });
 
     describe("when invalid data is passed", () => {
-      const invalidData = [
-        { title: [4, 2, 0], ingredients: [1, 2, 3], instructions: ["A", "B", "C"] },
-        { ingredients: "foo", title: "Paçoca moída", instructions: ["A", "B", "C"] },
-        { instructions: { foo: "bar" }, title: "Paçoca moída", ingredients: [1, 2, 3] }
-      ];
-
-      invalidData.map(data => {
+      invalidRecipe.map(data => {
         const key = Object.keys(data)[0];
         const value = data[key];
 
@@ -95,17 +99,13 @@ describe("[ROUTE] recipes", () => {
     });
 
     describe("when incomplete data is passed", () => {
-      const incompleteData = {
-        title: "Arroz com feijão"
-      };
-
       it("should return status 400", async () => {
-        const response = await request(app).post(baseUrl, incompleteData);
+        const response = await request(app).post(baseUrl, incompleteRecipe);
         expect(response.status).toBe(400);
       });
 
       it("should return an error", async () => {
-        const response = await request(app).post(baseUrl, incompleteData);
+        const response = await request(app).post(baseUrl, incompleteRecipe);
         expect(response.body.error).toBeTruthy();
       });
     });
