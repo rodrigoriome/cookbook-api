@@ -1,0 +1,33 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: cookbook_db_pass
+      POSTGRES_USER: cookbook_db_user
+      POSTGRES_DB: cookbook_db_name
+    restart: always
+    ports:
+      - "15432:5432"
+    volumes:
+      - /Users/rodrigo/Devbox/cookbook/cookbook-db:/var/lib/postgresql/data
+    networks:
+      - postgres-compose-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "hello@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "pass"
+    volumes:
+      - ../cookbook-db/pgadmin:/var/lib/pgadmin
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+    networks:
+      - postgres-compose-network
+
+networks:
+  postgres-compose-network:
+    driver: bridge

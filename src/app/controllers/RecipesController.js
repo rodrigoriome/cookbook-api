@@ -1,25 +1,29 @@
+const { Recipe } = require("../models");
+
 module.exports = {
   index(req, res) {
     return res.send("hello world");
   },
 
-  read(req, res) {
-    const recipeObject = {
-      id: 1,
-      title: "Pão com ovo",
-      ingredients: [2, 4],
-      instructions: [
-        "Frite o ovo.",
-        "Abra o pão ao meio com uma faca de dentes.",
-        "Coloque o ovo frito dentro do pão.",
-        "Sirva-se."
-      ]
-    };
+  async read(req, res) {
+    const { id } = req.params;
+    await Recipe.findByPk(id).then(recipe => {
+      if (recipe) {
+        return res.send(recipe);
+      }
 
-    return res.send(recipeObject);
+      return res.status(404).send(`Could not find recipe of id ${id}`);
+    });
   },
 
-  create(req, res) {
-    return res.status(201).send();
+  async create(req, res) {
+    const { title, ingredients, instructions } = req.body;
+    if (title && ingredients && instructions) {
+      await Recipe.create({ title, ingredients, instructions })
+        .then(recipe => res.status(201).send(recipe))
+        .catch(error => res.status(400).send({ error }));
+    } else {
+      return res.status(400).send({ error: "Dados incompletos" });
+    }
   }
 };
