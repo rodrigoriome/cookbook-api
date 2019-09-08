@@ -3,19 +3,23 @@
   "scripts": {
     "lint": "eslint src/**/*.js",
     "lintfix": "eslint src/**/*.js --fix",
-    "dev": "nodemon -L src/index.js",
-    "start": "node src/index.js"
+    "dev": "nodemon -L src/index.js --ignore __tests__",
+    "start": "node src/index.js",
+    "test": "jest"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.18",
     "babel-eslint": "^10.0.2",
     "eslint": "^6.2.2",
     "eslint-config-prettier": "^6.1.0",
     "eslint-plugin-prettier": "^3.1.0",
+    "jest": "^24.9.0",
     "nodemon": "^1.19.1",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "supertest": "^4.0.2"
   }
 }
