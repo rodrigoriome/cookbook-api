@@ -100,12 +100,20 @@ describe("[ROUTE] recipes", () => {
 
     describe("when incomplete data is passed", () => {
       it("should return status 400", async () => {
-        const response = await request(app).post(baseUrl, incompleteRecipe);
+        const response = await request(app)
+          .post(baseUrl)
+          .send(incompleteRecipe)
+          .set("Content-Type", "application/json")
+          .set("Accept", "application/json");
         expect(response.status).toBe(400);
       });
 
       it("should return an error", async () => {
-        const response = await request(app).post(baseUrl, incompleteRecipe);
+        const response = await request(app)
+          .post(baseUrl)
+          .send(incompleteRecipe)
+          .set("Content-Type", "application/json")
+          .set("Accept", "application/json");
         expect(response.body.error).toBeTruthy();
       });
     });
