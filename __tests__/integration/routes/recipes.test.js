@@ -17,10 +17,6 @@ const invalidRecipe = [
   { instructions: { foo: "bar" }, title: "Paçoca moída", ingredients: [1, 2, 3] }
 ];
 
-const incompleteRecipe = {
-  title: "Arroz com feijão"
-};
-
 describe("[ROUTE] recipes", () => {
   beforeAll(async () => await Recipe.create(validRecipe));
   afterAll(async () => await truncate());
@@ -95,26 +91,6 @@ describe("[ROUTE] recipes", () => {
             expect(response.body.error).toBeTruthy();
           });
         });
-      });
-    });
-
-    describe("when incomplete data is passed", () => {
-      it("should return status 400", async () => {
-        const response = await request(app)
-          .post(baseUrl)
-          .send(incompleteRecipe)
-          .set("Content-Type", "application/json")
-          .set("Accept", "application/json");
-        expect(response.status).toBe(400);
-      });
-
-      it("should return an error", async () => {
-        const response = await request(app)
-          .post(baseUrl)
-          .send(incompleteRecipe)
-          .set("Content-Type", "application/json")
-          .set("Accept", "application/json");
-        expect(response.body.error).toBeTruthy();
       });
     });
   });
