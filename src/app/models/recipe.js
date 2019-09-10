@@ -1,10 +1,10 @@
-"use strict";
-module.exports = (sequelize, DataTypes) => {
-  const Recipe = sequelize.define("Recipe", {
-    title: DataTypes.STRING,
-    ingredients: DataTypes.ARRAY(DataTypes.INTEGER),
-    instructions: DataTypes.ARRAY(DataTypes.STRING)
-  });
+const { STRING, ARRAY, INTEGER } = require("sequelize");
+const sequelize = require("../database/connection");
 
-  return Recipe;
-};
+const Recipe = sequelize.define("Recipe", {
+  title: STRING,
+  ingredients: ARRAY(INTEGER),
+  instructions: ARRAY(STRING)
+});
+
+module.exports = Recipe;

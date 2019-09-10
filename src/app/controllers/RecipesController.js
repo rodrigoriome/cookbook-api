@@ -1,4 +1,4 @@
-const { Recipe } = require("../models");
+const Recipe = require("../models/recipe");
 
 module.exports = {
   async index(req, res) {
@@ -9,49 +9,45 @@ module.exports = {
 
   async read(req, res) {
     const { id } = req.params;
-    await Recipe.findByPk(id).then(recipe => {
-      if (recipe) {
-        return res.send(recipe);
-      }
-
-      return res.status(404).send(`Could not find recipe of id ${id}`);
-    });
+    await Recipe.findByPk(id).then(recipe =>
+      recipe ? res.send(recipe) : res.status(404).send(`Could not find recipe of id ${id}`)
+    );
   },
 
   async save(req, res) {
     const { title, ingredients, instructions } = req.body;
 
-    let errorMsg = null;
+    let errors = {};
     const isNewRecipe = req.params.id ? false : true;
 
     // validate title
     if (!title) {
       if (isNewRecipe) {
-        errorMsg = "Dados incompletos";
+        errors.title = "Dados incompletos";
       }
     } else if (typeof title !== "string") {
-      errorMsg = "Dados inválidos";
+      errors.title = "Dados inválidos";
     }
 
     // validate ingredients
     if (ingredients) {
       if (!ingredients.length && isNewRecipe) {
-        errorMsg = "Dados incompletos";
+        errors.ingredients = "Dados incompletos";
       } else if (!Array.isArray(ingredients)) {
-        errorMsg = "Dados inválidos";
+        errors.ingredients = "Dados inválidos";
       }
     }
 
     // validate instructions
     if (instructions) {
       if (!instructions.length && isNewRecipe) {
-        errorMsg = "Dados incompletos";
-      } else if (!Array.isArray(ingredients)) {
-        errorMsg = "Dados inválidos";
+        errors.instructions = "Dados incompletos";
+      } else if (!Array.isArray(instructions)) {
+        errors.instructions = "Dados inválidos";
       }
     }
 
-    if (!errorMsg) {
+    if (!errors.title && !errors.ingredients && !errors.instructions) {
       if (isNewRecipe) {
         return await Recipe.create({ title, ingredients, instructions }).then(recipe => res.status(201).send(recipe));
       } else {
@@ -69,7 +65,7 @@ module.exports = {
       }
     }
 
-    return res.status(400).send({ error: errorMsg });
+    return res.status(400).send({ errors });
   },
 
   async delete(req, res) {
