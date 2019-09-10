@@ -5,7 +5,7 @@
     "lintfix": "eslint src/**/*.js --fix",
     "dev": "nodemon -L src/index.js --ignore __tests__",
     "start": "node src/index.js",
-    "test": "jest"
+    "test": "jest --silent"
   },
   "dependencies": {
     "cors": "^2.8.5",
