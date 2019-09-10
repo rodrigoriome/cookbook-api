@@ -85,21 +85,19 @@ describe("[ROUTE] recipes", () => {
         const value = data[key];
 
         describe(`when ${Array.isArray(value) ? "array" : typeof value} is passed as ${key}`, () => {
-          it("should return status 400", async done => {
+          it("should return status 400", async () => {
             const response = await request(app)
               .post(baseUrl)
               .send(data);
             expect(response.status).toBe(400);
-            done();
           });
 
-          it("should return an error", async done => {
+          it("should return an error", async () => {
             const response = await request(app)
               .post(baseUrl)
               .send(data);
 
             expect(response.body.errors[key]).toBeTruthy();
-            done();
           });
         });
       });
